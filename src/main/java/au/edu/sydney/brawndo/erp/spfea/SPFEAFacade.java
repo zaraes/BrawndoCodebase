@@ -7,6 +7,8 @@ import au.edu.sydney.brawndo.erp.ordering.Customer;
 import au.edu.sydney.brawndo.erp.ordering.Order;
 import au.edu.sydney.brawndo.erp.ordering.Product;
 import au.edu.sydney.brawndo.erp.spfea.ordering.*;
+import au.edu.sydney.brawndo.erp.spfea.ordering.strategy.discountStrategy.*;
+import au.edu.sydney.brawndo.erp.spfea.ordering.strategy.generateInvoiceStrategy.*;
 import au.edu.sydney.brawndo.erp.spfea.products.ProductDatabase;
 
 import java.time.LocalDateTime;
@@ -64,29 +66,53 @@ public class SPFEAFacade {
         if (isSubscription) {
             if (1 == discountType) { // 1 is flat rate
                     if (isBusiness) {
-                         order = new NewOrderImplSubscription(id, date, customerID, discountRate, numShipments);
+//                         order = new NewOrderImplSubscription(id, date, customerID, discountRate, numShipments);
+                        DiscountStrategy strategy = new NewOrderImplStrategy();
+                        GenerateInvoiceSubscriptionStrategy invoiceStrategy = new GenerateInvoiceSubscriptionSimpleStrategy();
+                        order = new ConcreteSubscriptionOrder(id, date, discountRate, customerID, strategy, 0, numShipments, invoiceStrategy);
                     } else {
-                        order = new Order66Subscription(id, date, discountRate, customerID, numShipments);
+//                        order = new Order66Subscription(id, date, discountRate, customerID, numShipments);
+                        DiscountStrategy strategy = new Order66Strategy();
+                        GenerateInvoiceSubscriptionStrategy invoiceStrategy = new GenerateInvoiceSubscriptionComplexStrategy();
+                        order = new ConcreteSubscriptionOrder(id, date, discountRate, customerID, strategy, 0, numShipments, invoiceStrategy);
                     }
                 } else if (2 == discountType) { // 2 is bulk discount
                     if (isBusiness) {
-                        order = new BusinessBulkDiscountSubscription(id, customerID, date, discountThreshold, discountRate, numShipments);
+//                        order = new BusinessBulkDiscountSubscription(id, customerID, date, discountThreshold, discountRate, numShipments);
+                        DiscountStrategy strategy = new BusinessBulkDiscountStrategy();
+                        GenerateInvoiceSubscriptionStrategy invoiceStrategy = new GenerateInvoiceSubscriptionSimpleStrategy();
+                        order = new ConcreteSubscriptionOrder(id, date, discountRate, customerID, strategy, discountThreshold, numShipments, invoiceStrategy);
                     } else {
-                        order = new FirstOrderSubscription(id, date, discountRate, discountThreshold, customerID, numShipments);
+//                        order = new FirstOrderSubscription(id, date, discountRate, discountThreshold, customerID, numShipments);
+                        DiscountStrategy strategy = new FirstOrderStrategy();
+                        GenerateInvoiceSubscriptionStrategy invoiceStrategy = new GenerateInvoiceSubscriptionComplexStrategy();
+                        order = new ConcreteSubscriptionOrder(id, date, discountRate, customerID, strategy, discountThreshold, numShipments, invoiceStrategy);
                     }
             } else {return null;}
         } else {
             if (1 == discountType) {
                 if (isBusiness) {
-                    order = new NewOrderImpl(id, date, customerID, discountRate);
+//                    order = new NewOrderImpl(id, date, customerID, discountRate);
+                    DiscountStrategy discountStrategy = new NewOrderImplStrategy();
+                    GenerateInvoiceOrderStrategy invoiceStrategy = new GenerateInvoiceOrderSimpleStrategy();
+                    order = new ConcreteOrder(id, date, discountRate, customerID, discountStrategy, 0, invoiceStrategy);
                 } else {
-                    order = new Order66(id, date, discountRate, customerID);
+//                    order = new Order66(id, date, discountRate, customerID);
+                    DiscountStrategy strategy = new Order66Strategy();
+                    GenerateInvoiceOrderStrategy invoiceStrategy = new GenerateInvoiceOrderComplexStrategy();
+                    order = new ConcreteOrder(id, date, discountRate, customerID, strategy, 0, invoiceStrategy);
                 }
             } else if (2 == discountType) {
                 if (isBusiness) {
-                    order = new BusinessBulkDiscountOrder(id, customerID, date, discountThreshold, discountRate);
+//                    order = new BusinessBulkDiscountOrder(id, customerID, date, discountThreshold, discountRate);
+                    DiscountStrategy strategy = new BusinessBulkDiscountStrategy();
+                    GenerateInvoiceOrderStrategy invoiceStrategy = new GenerateInvoiceOrderSimpleStrategy();
+                    order = new ConcreteOrder(id, date, discountRate, customerID, strategy, discountThreshold, invoiceStrategy);
                 } else {
-                    order = new FirstOrder(id, date, discountRate, discountThreshold, customerID);
+//                    order = new FirstOrder(id, date, discountRate, discountThreshold, customerID);
+                    DiscountStrategy strategy = new FirstOrderStrategy();
+                    GenerateInvoiceOrderStrategy invoiceStrategy = new GenerateInvoiceOrderComplexStrategy();
+                    order = new ConcreteOrder(id, date, discountRate, customerID, strategy, discountThreshold, invoiceStrategy);
                 }
             } else {return null;}
         }
@@ -126,6 +152,7 @@ public class SPFEAFacade {
             throw new SecurityException();
         }
 
+        // DB doing is shit
         return new ArrayList<>(ProductDatabase.getTestProducts());
     }
 

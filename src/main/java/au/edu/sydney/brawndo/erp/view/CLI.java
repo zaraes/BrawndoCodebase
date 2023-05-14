@@ -376,6 +376,7 @@ public class CLI {
                 case "set":
                     Integer productID = ViewUtils.getInt("Please enter a product, or blank to cancel", true);
                     if (null == productID) break;
+                    // getting products
                     List<Product> products = model.getAllProducts();
                     if (productID < 1 || productID > products.size()) {
                         System.out.println("Invalid product");
@@ -492,6 +493,7 @@ public class CLI {
 
     private static void showProductDetails() {
         int productID = -1;
+        // get all products
         List<Product> products = model.getAllProducts();
 
         while (-1 == productID) {
