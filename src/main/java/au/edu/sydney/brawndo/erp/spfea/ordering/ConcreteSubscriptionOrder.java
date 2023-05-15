@@ -125,13 +125,13 @@ public class ConcreteSubscriptionOrder implements SubscriptionOrder {
 
     @Override
     public String shortDesc() {
-        return String.format("ID:%s $%,.2f per shipment, $%,.2f total", getOrderID(), getRecurringCost(), getTotalCost());
+        return String.format("ID:%s $%,.2f per shipment, $%,.2f total", getOrderID(), getRecurringCost(), getTotalCost()/numShipments);
     }
 
     @Override
     public String longDesc() {
         double fullCost = 0.0;
-        double discountedCost = getTotalCost();
+        double discountedCost = getTotalCost()/numShipments;
         StringBuilder productSB = new StringBuilder();
 
         List<Product> keyList = new ArrayList<>(getProducts().keySet());
@@ -168,7 +168,7 @@ public class ConcreteSubscriptionOrder implements SubscriptionOrder {
 
     @Override
     public double getRecurringCost() {
-        return this.getTotalCost();
+        return this.getTotalCost()/numShipments;
     }
 
     @Override

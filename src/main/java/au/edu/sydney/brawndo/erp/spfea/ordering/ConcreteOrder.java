@@ -36,7 +36,7 @@ public class ConcreteOrder implements Order {
 
     @Override
     public double getTotalCost() {
-        return discountStrategy.getTotalCost(this.products, discountRate, 0);
+        return discountStrategy.getTotalCost(this.products, discountRate, discountThreshold);
     }
 
     @Override

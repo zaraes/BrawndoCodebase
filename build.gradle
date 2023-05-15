@@ -5,30 +5,32 @@ plugins {
 
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
+sourceCompatibility = '17'
+targetCompatibility = '17'
 
 repositories {
     mavenCentral()
-    jcenter()
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2' // JUnit 5 API
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2' // JUnit 5 Engine
+    testImplementation 'org.hamcrest:hamcrest:2.2' // Hamcrest dependency
 
-    testImplementation 'org.mockito:mockito-core:2.+'
-    testImplementation group: 'org.powermock', name: 'powermock-module-junit4', version: '2.0.0'
-    testImplementation group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.0'
+    testImplementation 'org.mockito:mockito-core:3.12.4' // Mockito core dependency
+    testImplementation 'org.mockito:mockito-junit-jupiter:3.12.4' // Mockito JUnit 5 integration
+
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.12.4'
+
+    testImplementation group: 'org.springframework', name: 'spring-test', version: '6.0.8'
 }
 
 test {
     useJUnitPlatform()
 }
 
-application {
-    mainClassName = "au.edu.sydney.brawndo.erp.view.CLI"
-}
-
 run {
     standardInput = System.in
 }
+
+mainClassName = "au.edu.sydney.brawndo.erp.view.CLI"
