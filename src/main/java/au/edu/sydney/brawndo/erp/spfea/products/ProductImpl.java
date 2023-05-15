@@ -7,10 +7,10 @@ public class ProductImpl implements Product {
     private final String name;
     private final double[] manufacturingData;
     private final double cost;
-    private double[] recipeData;
-    private double[] marketingData;
-    private double[] safetyData;
-    private double[] licensingData;
+    private final double[] recipeData;
+    private final double[] marketingData;
+    private final double[] safetyData;
+    private final double[] licensingData;
 
     public ProductImpl(String name,
                        double cost,

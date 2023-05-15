@@ -4,6 +4,8 @@ import au.edu.sydney.brawndo.erp.ordering.Order;
 import au.edu.sydney.brawndo.erp.ordering.Product;
 import au.edu.sydney.brawndo.erp.spfea.ordering.strategy.discountStrategy.DiscountStrategy;
 import au.edu.sydney.brawndo.erp.spfea.ordering.strategy.generateInvoiceStrategy.GenerateInvoiceOrderStrategy;
+import au.edu.sydney.brawndo.erp.spfea.products.ProductComparison;
+import au.edu.sydney.brawndo.erp.spfea.products.ProductImpl;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -52,13 +54,7 @@ public class ConcreteOrder implements Order {
         // rebuilt over the network, so we had to check for presence and same values
 
         for (Product contained: products.keySet()) {
-            if (contained.getCost() == product.getCost() &&
-                    contained.getProductName().equals(product.getProductName()) &&
-                    Arrays.equals(contained.getManufacturingData(), product.getManufacturingData()) &&
-                    Arrays.equals(contained.getRecipeData(), product.getRecipeData()) &&
-                    Arrays.equals(contained.getMarketingData(), product.getMarketingData()) &&
-                    Arrays.equals(contained.getSafetyData(), product.getSafetyData()) &&
-                    Arrays.equals(contained.getLicensingData(), product.getLicensingData())) {
+            if (ProductComparison.compare(contained, product)) {
                 product = contained;
                 break;
             }
@@ -78,13 +74,7 @@ public class ConcreteOrder implements Order {
         // rebuilt over the network, so we had to check for presence and same values
 
         for (Product contained: products.keySet()) {
-            if (contained.getCost() == product.getCost() &&
-                    contained.getProductName().equals(product.getProductName()) &&
-                    Arrays.equals(contained.getManufacturingData(), product.getManufacturingData()) &&
-                    Arrays.equals(contained.getRecipeData(), product.getRecipeData()) &&
-                    Arrays.equals(contained.getMarketingData(), product.getMarketingData()) &&
-                    Arrays.equals(contained.getSafetyData(), product.getSafetyData()) &&
-                    Arrays.equals(contained.getLicensingData(), product.getLicensingData())) {
+            if (ProductComparison.compare(contained, product)) {
                 product = contained;
                 break;
             }
