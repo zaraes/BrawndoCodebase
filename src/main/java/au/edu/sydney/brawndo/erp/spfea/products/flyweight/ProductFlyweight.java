@@ -1,4 +1,4 @@
-package au.edu.sydney.brawndo.erp.spfea.products;
+package au.edu.sydney.brawndo.erp.spfea.products.flyweight;
 
 public class ProductFlyweight implements Flyweight {
     private final String name;

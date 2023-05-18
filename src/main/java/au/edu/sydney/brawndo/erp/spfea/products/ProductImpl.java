@@ -1,6 +1,8 @@
 package au.edu.sydney.brawndo.erp.spfea.products;
 
 import au.edu.sydney.brawndo.erp.ordering.Product;
+import au.edu.sydney.brawndo.erp.spfea.products.flyweight.Flyweight;
+import au.edu.sydney.brawndo.erp.spfea.products.flyweight.ProductFlyweightFactory;
 
 public class ProductImpl implements Product {
     private final Flyweight productFlyweight;

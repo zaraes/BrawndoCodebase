@@ -1,4 +1,4 @@
-package au.edu.sydney.brawndo.erp.spfea.products;
+package au.edu.sydney.brawndo.erp.spfea.products.flyweight;
 
 import java.util.Arrays;
 import java.util.HashMap;
