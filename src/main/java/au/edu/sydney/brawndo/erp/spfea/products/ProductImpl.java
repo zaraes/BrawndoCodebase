@@ -3,15 +3,7 @@ package au.edu.sydney.brawndo.erp.spfea.products;
 import au.edu.sydney.brawndo.erp.ordering.Product;
 
 public class ProductImpl implements Product {
-
-    private final String name;
-    private final double[] manufacturingData;
-    private final double cost;
-    private final double[] recipeData;
-    private final double[] marketingData;
-    private final double[] safetyData;
-    private final double[] licensingData;
-
+    private final Flyweight productFlyweight;
     public ProductImpl(String name,
                        double cost,
                        double[] manufacturingData,
@@ -19,53 +11,53 @@ public class ProductImpl implements Product {
                        double[] marketingData,
                        double[] safetyData,
                        double[] licensingData) {
-        this.name = name;
-        this.cost = cost;
-        this.manufacturingData = manufacturingData;
-        this.recipeData = recipeData;
-        this.marketingData = marketingData;
-        this.safetyData = safetyData;
-        this.licensingData = licensingData;
+        this.productFlyweight = ProductFlyweightFactory.getProductFlyweight(name,
+                                                                            cost,
+                                                                            manufacturingData,
+                                                                            recipeData,
+                                                                            marketingData,
+                                                                            safetyData,
+                                                                            licensingData);
+
     }
 
     @Override
     public String getProductName() {
-        return name;
+        return productFlyweight.getName();
     }
 
     @Override
     public double getCost() {
-        return cost;
+        return productFlyweight.getCost();
     }
 
     @Override
     public double[] getManufacturingData() {
-        return manufacturingData;
+        return productFlyweight.getManufacturingData();
     }
 
     @Override
     public double[] getRecipeData() {
-        return recipeData;
+        return productFlyweight.getRecipeData();
     }
 
     @Override
     public double[] getMarketingData() {
-        return marketingData;
+        return productFlyweight.getMarketingData();
     }
 
     @Override
     public double[] getSafetyData() {
-        return safetyData;
+        return productFlyweight.getSafetyData();
     }
 
     @Override
     public double[] getLicensingData() {
-        return licensingData;
+        return productFlyweight.getLicensingData();
     }
 
     @Override
     public String toString() {
-
-        return String.format("%s", name);
+        return String.format("%s", productFlyweight.getName());
     }
 }
