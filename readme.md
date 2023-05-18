@@ -62,8 +62,21 @@ The contact method in `ContactHandler` was bulky and long. I decided to break it
 This solution allows us to break up the code, and add extra single responsibility classes when more contact methods are needed in future, as opposed to adding to a long method which stores all the logic.
 
 ### System Lag
+#### Lazy load (Lazy initialization)
+- Expensive Object: `CustomerImpl`
+- Lazy load Initializer: `LazyLoad`
 
+##### Solution Summary
+Any time Customers are loaded from the database, the system loads for a long time – even if only 1 field of 1 customer is need. The `CustomerImpl` contains attributes that can be loaded when they are actually needed. The constructor for `CustomerImpl` initialises the `CustomerImpl` object with an authenitication token and customer id. It creates lazily loaded attributes using the `setupLazyAttribute()` method and assigns them function that retrieve the corresponding customer fields from the database.
 
+The method `setupLazyAttribute()` is a helper method that creates a `LazyLoad<T>` object. It takes a `Supplier<T>` initializer function as a parameter, which is responsible for providing the inital value of the lazily loaded attribute.
+
+The class provides getter methods for retrieving various customer attributes. These getter methods use the `getValue()` method of the corresponding `Lazy<T>` objects to retrieve the attribute values. If the value has not been loaded yet, the `getValue()` method triggers the initialisation by calling the initializer function and caches the value for future requests.
+
+The inner class `Lazy<T>` is a generic class used to implement lazy initialization. It has a private instance variable `value` to store the value once it is initialized and a `Supplier<T>` initialiser to provide the initial value when needed. The `getValue()` method checks if the value is null and initializes it by calling the initializer function if necessary. It then returns the cached or newly initialized value.
+
+##### Solution Benefit
+The lazy initalization design pattern allows attribute values to be loaded on demand when they are first accessed, rather than eagerly loading all attributes at once. This approach improves performance by avoiding unnecessary loading of attributes that might not be needed and deferring resource intensive operations until necessary.
 ### Hard to Compare Products
 #### Value Object
 - Value Object: `ProductImpl`
