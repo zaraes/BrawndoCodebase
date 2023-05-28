@@ -23,7 +23,7 @@ This solution reduces RAM by preventing duplicate classes.
 - ConcreteStrategy (1): `BusinessBulkDiscountStrategy`, `FirstOrderStrategy`, `NewOrderImplStrategy`, `Order66Strategy`
 
 - Strategy (2.1): `GenerateInvoiceOrderStrategy`
-- ConcreteStrategy (2): `GenerateInvoiceOrderSimpleStrategy`, `GenerateInvoiceOrderComplexStrategy`
+- ConcreteStrategy (2.1): `GenerateInvoiceOrderSimpleStrategy`, `GenerateInvoiceOrderComplexStrategy`
 
 - Strategy (2.2): `GenerateInvoiceSubscriptionStrategy`
 - ConcreteStrategy (2.2): `GenerateInvoiceSubscriptionSimpleStrategy`, `GenerateInvoiceSubscriptionComplexStrategy`
@@ -91,6 +91,17 @@ This solution removes repetative comparison code, and allows `ProductImpl` to be
 
 
 ### Slow Order Creation
+#### Unit of work
+- Unit of work: `OrderUnitOfWork`
+- Context: `SPFEAFacade`
+
+##### Solution Summary
+I have chosen Unit of work to reduce unnecessary expensive, time intensive calls to the Database. I created a class `OrderUnitOfWork` to keep track of new orders, updated orders, and removed orders. It then has a `commit()` method which applys all stored changes to the database at once.
+
+`SPFEAFacde` now uses `OrderUnitOfWork` to store new order changes and commits them all at once, only when neccessary, as opposed to commiting them all to the database after every change.
+
+##### Solution Benefit
+By allowing `SPEFEAFacade` to make changes to the database only when needed, the time it takes to create a new order is greatly reduced, delaying all the time intensive operations until the end of order creation, or only when needed.
 
 
 ## Notes About the Submission

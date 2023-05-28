@@ -19,6 +19,7 @@ import java.util.List;
 @SuppressWarnings("Duplicates")
 public class SPFEAFacade {
     private AuthToken token;
+    OrderUnitOfWork unitOfWork = new OrderUnitOfWork();
 
     public boolean login(String userName, String password) {
         token = AuthModule.login(userName, password);
@@ -63,27 +64,25 @@ public class SPFEAFacade {
 
         int id = TestDatabase.getInstance().getNextOrderID();
 
+
+
         if (isSubscription) {
             if (1 == discountType) { // 1 is flat rate
                     if (isBusiness) {
-//                         order = new NewOrderImplSubscription(id, date, customerID, discountRate, numShipments);
                         DiscountStrategy strategy = new NewOrderImplStrategy();
                         GenerateInvoiceSubscriptionStrategy invoiceStrategy = new GenerateInvoiceSubscriptionSimpleStrategy();
                         order = new ConcreteSubscriptionOrder(id, date, discountRate, customerID, strategy, 0, numShipments, invoiceStrategy);
                     } else {
-//                        order = new Order66Subscription(id, date, discountRate, customerID, numShipments);
                         DiscountStrategy strategy = new Order66Strategy();
                         GenerateInvoiceSubscriptionStrategy invoiceStrategy = new GenerateInvoiceSubscriptionComplexStrategy();
                         order = new ConcreteSubscriptionOrder(id, date, discountRate, customerID, strategy, 0, numShipments, invoiceStrategy);
                     }
                 } else if (2 == discountType) { // 2 is bulk discount
                     if (isBusiness) {
-//                        order = new BusinessBulkDiscountSubscription(id, customerID, date, discountThreshold, discountRate, numShipments);
                         DiscountStrategy strategy = new BusinessBulkDiscountStrategy();
                         GenerateInvoiceSubscriptionStrategy invoiceStrategy = new GenerateInvoiceSubscriptionSimpleStrategy();
                         order = new ConcreteSubscriptionOrder(id, date, discountRate, customerID, strategy, discountThreshold, numShipments, invoiceStrategy);
                     } else {
-//                        order = new FirstOrderSubscription(id, date, discountRate, discountThreshold, customerID, numShipments);
                         DiscountStrategy strategy = new FirstOrderStrategy();
                         GenerateInvoiceSubscriptionStrategy invoiceStrategy = new GenerateInvoiceSubscriptionComplexStrategy();
                         order = new ConcreteSubscriptionOrder(id, date, discountRate, customerID, strategy, discountThreshold, numShipments, invoiceStrategy);
@@ -92,24 +91,20 @@ public class SPFEAFacade {
         } else {
             if (1 == discountType) {
                 if (isBusiness) {
-//                    order = new NewOrderImpl(id, date, customerID, discountRate);
                     DiscountStrategy discountStrategy = new NewOrderImplStrategy();
                     GenerateInvoiceOrderStrategy invoiceStrategy = new GenerateInvoiceOrderSimpleStrategy();
                     order = new ConcreteOrder(id, date, discountRate, customerID, discountStrategy, 0, invoiceStrategy);
                 } else {
-//                    order = new Order66(id, date, discountRate, customerID);
                     DiscountStrategy strategy = new Order66Strategy();
                     GenerateInvoiceOrderStrategy invoiceStrategy = new GenerateInvoiceOrderComplexStrategy();
                     order = new ConcreteOrder(id, date, discountRate, customerID, strategy, 0, invoiceStrategy);
                 }
             } else if (2 == discountType) {
                 if (isBusiness) {
-//                    order = new BusinessBulkDiscountOrder(id, customerID, date, discountThreshold, discountRate);
                     DiscountStrategy strategy = new BusinessBulkDiscountStrategy();
                     GenerateInvoiceOrderStrategy invoiceStrategy = new GenerateInvoiceOrderSimpleStrategy();
                     order = new ConcreteOrder(id, date, discountRate, customerID, strategy, discountThreshold, invoiceStrategy);
                 } else {
-//                    order = new FirstOrder(id, date, discountRate, discountThreshold, customerID);
                     DiscountStrategy strategy = new FirstOrderStrategy();
                     GenerateInvoiceOrderStrategy invoiceStrategy = new GenerateInvoiceOrderComplexStrategy();
                     order = new ConcreteOrder(id, date, discountRate, customerID, strategy, discountThreshold, invoiceStrategy);
@@ -117,7 +112,7 @@ public class SPFEAFacade {
             } else {return null;}
         }
 
-        TestDatabase.getInstance().saveOrder(token, order);
+        unitOfWork.addNewOrder(order);
         return order.getOrderID();
     }
 
@@ -152,7 +147,6 @@ public class SPFEAFacade {
             throw new SecurityException();
         }
 
-        // DB doing is shit
         return new ArrayList<>(ProductDatabase.getTestProducts());
     }
 
@@ -199,15 +193,18 @@ public class SPFEAFacade {
                     ContactMethod.PHONECALL
             );
         }
-
+        unitOfWork.commit(token);
         Order order = TestDatabase.getInstance().getOrder(token, orderID);
 
         order.finalise();
         TestDatabase.getInstance().saveOrder(token, order);
+        unitOfWork.addNewOrder(order);
+        unitOfWork.commit(token);
         return ContactHandler.sendInvoice(token, getCustomer(order.getCustomer()), contactPriorityAsMethods, order.generateInvoiceData());
     }
 
     public void logout() {
+        unitOfWork.commit(token);
         AuthModule.logout(token);
         token = null;
     }
@@ -217,6 +214,7 @@ public class SPFEAFacade {
             throw new SecurityException();
         }
 
+        unitOfWork.commit(token);
         Order order = TestDatabase.getInstance().getOrder(token, orderID);
         if (null == order) {
             return 0.0;
@@ -230,16 +228,15 @@ public class SPFEAFacade {
             throw new SecurityException();
         }
 
+        unitOfWork.commit(token);
         Order order = TestDatabase.getInstance().getOrder(token, orderID);
 
         if (null == order) {
-            System.out.println("got here");
             return;
         }
 
         order.setProduct(product, qty);
-
-        TestDatabase.getInstance().saveOrder(token, order);
+        unitOfWork.addNewOrder(order);
     }
 
     public String getOrderLongDesc(int orderID) {
@@ -247,6 +244,7 @@ public class SPFEAFacade {
             throw new SecurityException();
         }
 
+        unitOfWork.commit(token);
         Order order = TestDatabase.getInstance().getOrder(token, orderID);
 
         if (null == order) {
@@ -261,6 +259,7 @@ public class SPFEAFacade {
             throw new SecurityException();
         }
 
+        unitOfWork.commit(token);
         Order order = TestDatabase.getInstance().getOrder(token, orderID);
 
         if (null == order) {

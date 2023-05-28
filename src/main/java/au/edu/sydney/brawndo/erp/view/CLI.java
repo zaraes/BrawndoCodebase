@@ -36,7 +36,6 @@ public class CLI {
                 case 2:
                     return;
                 default:
-                    // Can't get here
             }
         } while (-1 == selection);
     }
@@ -97,7 +96,6 @@ public class CLI {
                 case 4:
                     return;
                 default:
-                    // Can't get here
             }
         } while (-1 == selection);
     }
@@ -126,7 +124,6 @@ public class CLI {
                 case 3:
                     return;
                 default:
-                    // Can't get here
             }
         } while (-1 == selection);
     }
@@ -208,7 +205,6 @@ public class CLI {
                 case 6:
                     return;
                 default:
-                    // Can't get here
             }
         } while (-1 == selection);
     }
@@ -389,6 +385,7 @@ public class CLI {
                         break;
                     }
 
+                    // slow
                     model.orderLineSet(orderID, products.get(productID - 1), productQty);
 
                     break;
@@ -475,7 +472,6 @@ public class CLI {
                 case 4:
                     return;
                 default:
-                    // Can't get here
             }
         } while (-1 == selection);
     }
